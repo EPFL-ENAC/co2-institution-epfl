@@ -1,0 +1,35 @@
+{{- /*
+One ConfigMap that holds the institution folder. The co2-calculator frontend
+mounts it at /institution.
+
+The version is in the default name: the frontend reads the folder only at
+startup, and a ConfigMap change alone does not restart a pod. A new name
+changes the pod template, which does.
+*/ -}}
+{{- $name := .Values.configMapName | default (printf "%s-%s" .Chart.Name (.Chart.Version | replace "." "-" | replace "+" "-")) -}}
+{{- /* A ConfigMap key cannot contain "/", so a file in a subfolder cannot be mounted at its path. */ -}}
+{{- range $path, $_ := .Files.Glob "institution/*/*" }}
+{{- fail (printf "%s: the institution folder is flat. Name the fonts font-regular.woff2, font-medium.woff2 and font-bold.woff2 at its top." $path) }}
+{{- end }}
+{{- $text := list ".env" ".conf" ".svg" -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $name }}
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+  {{- range $path, $_ := .Files.Glob "institution/*" }}
+  {{- if has (ext $path) $text }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}
+  {{- end }}
+binaryData:
+  {{- range $path, $_ := .Files.Glob "institution/*" }}
+  {{- if not (has (ext $path) $text) }}
+  {{ base $path }}: {{ $.Files.Get $path | b64enc }}
+  {{- end }}
+  {{- end }}

@@ -1,0 +1,6 @@
+# Files that are not part of the chart package.
+.git/
+.github/
+.gitignore
+README.md
+*.tgz
