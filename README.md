@@ -51,21 +51,39 @@ helmCharts:
   - name: co2-institution-epfl
     releaseName: co2-institution-epfl
     repo: oci://ghcr.io/epfl-enac/co2-institution-epfl/helm
-    version: 1.0.0
+    version: 1.0.1
   - name: co2-calculator
     valuesInline:
       frontend:
         institutionAssets:
           volume:
             configMap:
-              name: co2-institution-epfl-1-0-0
+              name: co2-institution-epfl
+
+replacements:
+  - source:
+      kind: ConfigMap
+      name: co2-institution-epfl
+      fieldPath: metadata.labels.[app.kubernetes.io/version]
+    targets:
+      - select:
+          kind: Deployment
+          name: co2-calculator-frontend
+        fieldPaths:
+          - spec.template.metadata.annotations.[co2-calculator/institution-version]
+        options:
+          create: true
 ```
 
-The version is part of the ConfigMap name. A new version changes the
-name, and that restarts the frontend pods. A value of the pod environment
-wins over a line of `values.env`, so each cluster keeps its own values in
-its overlay: `APP_ENVIRONMENT`, `APP_SENTRY_DSN`, `APP_MATOMO_*` and
-`APP_OPS_*`.
+The frontend reads the folder only at startup, and a change of a
+ConfigMap does not restart a pod. The `replacements` block copies the
+chart version into an annotation of the frontend pods. So a new chart
+version changes the pods, and the cluster restarts them. You change one
+line for a new version: `version`.
+
+A value of the pod environment wins over a line of `values.env`. Thus
+each cluster keeps its own values in its overlay: `APP_ENVIRONMENT`,
+`APP_SENTRY_DSN`, `APP_MATOMO_*` and `APP_OPS_*`.
 
 ## Fonts
 
@@ -85,8 +103,8 @@ larger, use a font server and URLs.
 3. Open a pull request. The CI job renders the chart.
 4. After the merge, push the tag of the new version, for example
    `v1.0.1`. The CI job publishes the chart.
-5. In the operations repository, set the new chart version and the new
-   ConfigMap name.
+5. In the operations repository, set the new chart version in each
+   overlay.
 
 If the tag and `Chart.yaml` give different versions, the CI job stops.
 

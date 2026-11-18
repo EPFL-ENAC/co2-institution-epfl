@@ -3,6 +3,6 @@ name: co2-institution-epfl
 description: The EPFL institution folder of the CO2 Calculator, as one ConfigMap
 type: application
 # One version for the chart and its content: a change of a value, a color or
-# a logo is a new version. The version is part of the ConfigMap name, so a
-# new version restarts the frontend pods.
-version: 1.0.0
+# a logo is a new version. The version is a label of the ConfigMap, which the
+# cluster uses to restart the frontend pods.
+version: 1.0.1

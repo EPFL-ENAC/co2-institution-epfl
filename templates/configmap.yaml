@@ -2,11 +2,12 @@
 One ConfigMap that holds the institution folder. The co2-calculator frontend
 mounts it at /institution.
 
-The version is in the default name: the frontend reads the folder only at
-startup, and a ConfigMap change alone does not restart a pod. A new name
-changes the pod template, which does.
+The name is fixed, and the chart version is a label. The frontend reads the
+folder only at startup, and a ConfigMap change alone does not restart a pod.
+The cluster copies the version label into an annotation of the frontend
+pods, so a new chart version restarts them (see the README).
 */ -}}
-{{- $name := .Values.configMapName | default (printf "%s-%s" .Chart.Name (.Chart.Version | replace "." "-" | replace "+" "-")) -}}
+{{- $name := .Values.configMapName | default .Chart.Name -}}
 {{- /* A ConfigMap key cannot contain "/", so a file in a subfolder cannot be mounted at its path. */ -}}
 {{- range $path, $_ := .Files.Glob "institution/*/*" }}
 {{- fail (printf "%s: the institution folder is flat. Name the fonts font-regular.woff2, font-medium.woff2 and font-bold.woff2 at its top." $path) }}
