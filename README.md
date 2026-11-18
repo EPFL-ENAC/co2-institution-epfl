@@ -55,6 +55,8 @@ helmCharts:
   - name: co2-calculator
     valuesInline:
       frontend:
+        podAnnotations:
+          institution-version: set-by-replacement
         institutionAssets:
           volume:
             configMap:
@@ -70,16 +72,18 @@ replacements:
           kind: Deployment
           name: co2-calculator-frontend
         fieldPaths:
-          - spec.template.metadata.annotations.[co2-calculator/institution-version]
-        options:
-          create: true
+          - spec.template.metadata.annotations.institution-version
 ```
 
 The frontend reads the folder only at startup, and a change of a
 ConfigMap does not restart a pod. The `replacements` block copies the
-chart version into an annotation of the frontend pods. So a new chart
-version changes the pods, and the cluster restarts them. You change one
-line for a new version: `version`.
+chart version into the `institution-version` annotation of the frontend
+pods. So a new chart version changes the pods, and the cluster restarts
+them. You change one line for a new version: `version`.
+
+The annotation must exist before the replacement runs, which is why
+`podAnnotations` sets a first value. A replacement cannot add a key to an
+empty annotation list.
 
 A value of the pod environment wins over a line of `values.env`. Thus
 each cluster keeps its own values in its overlay: `APP_ENVIRONMENT`,
