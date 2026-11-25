@@ -12,7 +12,7 @@ pods, so a new chart version restarts them (see the README).
 {{- range $path, $_ := .Files.Glob "institution/*/*" }}
 {{- fail (printf "%s: the institution folder is flat. Name the fonts font-regular.woff2, font-medium.woff2 and font-bold.woff2 at its top." $path) }}
 {{- end }}
-{{- $text := list ".env" ".conf" ".svg" -}}
+{{- $text := list ".env" ".conf" ".svg" ".html" -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:

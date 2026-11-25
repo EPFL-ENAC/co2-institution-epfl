@@ -1,0 +1,78 @@
+name: image
+
+# Why this exists: a cluster and a Docker Compose host get the institution
+# folder as an image. A pull request checks that the image builds and that
+# it gives the folder. A version tag publishes it.
+"on":
+  pull_request:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: The folder must give theme.conf
+        run: test -s institution/theme.conf
+      - name: Build
+        run: docker build -t institution .
+      # The copy is the whole contract of the image: run it with the limits
+      # of the frontend pod (read-only root, no capability, an arbitrary
+      # user), and compare the result with the folder.
+      - name: The image must copy the folder to /out
+        run: |
+          mkdir out && chmod 777 out
+          echo stale > out/removed-file
+          docker run --rm --read-only --cap-drop ALL --user 12345:0 \
+            -v "$PWD/out:/out" institution
+          diff -r institution out
+
+  publish:
+    name: Publish the image
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # A version tag publishes for every cluster: only a commit that went
+      # through review on main can carry one.
+      - name: The tagged commit must be on main
+        run: |
+          git fetch --quiet origin main
+          git merge-base --is-ancestor "${GITHUB_SHA}" origin/main || {
+            echo "tag ${GITHUB_REF_NAME} is not on main" >&2
+            exit 1
+          }
+      # Same check as the chart job: one tag, one version, two artifacts.
+      - name: The tag must equal the chart version
+        run: |
+          chart="$(sed -n 's/^version: //p' Chart.yaml)"
+          test "v${chart}" = "${GITHUB_REF_NAME}" || {
+            echo "tag ${GITHUB_REF_NAME} is not v${chart} of Chart.yaml" >&2
+            exit 1
+          }
+      - name: Log in to ghcr.io
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACTOR: ${{ github.actor }}
+        run: echo "${TOKEN}" | docker login ghcr.io --username "${ACTOR}" --password-stdin
+      # The git tag is the image tag, v1.1.0, like the app images. Two
+      # platforms, because a cluster node and a laptop can differ.
+      - name: Build and push
+        run: |
+          image="ghcr.io/$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')"
+          docker buildx create --use
+          docker buildx build --platform linux/amd64,linux/arm64 \
+            --tag "${image}:${GITHUB_REF_NAME}" --push .

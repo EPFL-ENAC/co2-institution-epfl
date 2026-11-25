@@ -35,6 +35,18 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # A version tag publishes for every cluster: only a commit that went
+      # through review on main can carry one.
+      - name: The tagged commit must be on main
+        run: |
+          git fetch --quiet origin main
+          git merge-base --is-ancestor "${GITHUB_SHA}" origin/main || {
+            echo "tag ${GITHUB_REF_NAME} is not on main" >&2
+            exit 1
+          }
       # The tag is the source of the version: a tag that differs from
       # Chart.yaml stops the job, so the two cannot drift.
       - name: The tag must equal the chart version

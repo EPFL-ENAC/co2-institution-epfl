@@ -1,0 +1,4 @@
+# The image holds the institution folder and nothing else.
+*
+!institution/
+**/.DS_Store

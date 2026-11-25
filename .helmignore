@@ -3,4 +3,7 @@
 .github/
 .gitignore
 README.md
+Dockerfile
+.dockerignore
 *.tgz
+.DS_Store
