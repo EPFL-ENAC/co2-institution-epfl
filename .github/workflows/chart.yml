@@ -1,0 +1,52 @@
+name: chart
+
+# Why this exists: the cluster installs the institution folder as a Helm
+# chart, next to the co2-calculator chart. A pull request checks that the
+# chart renders. A version tag publishes it.
+"on":
+  pull_request:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    name: Lint and render
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Lint
+        run: helm lint .
+      - name: Render
+        run: helm template co2-institution-epfl . > /dev/null
+      - name: The folder must give theme.conf
+        run: test -s institution/theme.conf
+
+  publish:
+    name: Publish the chart
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: render
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      # The tag is the source of the version: a tag that differs from
+      # Chart.yaml stops the job, so the two cannot drift.
+      - name: The tag must equal the chart version
+        run: |
+          chart="$(sed -n 's/^version: //p' Chart.yaml)"
+          test "v${chart}" = "${GITHUB_REF_NAME}" || {
+            echo "tag ${GITHUB_REF_NAME} is not v${chart} of Chart.yaml" >&2
+            exit 1
+          }
+      - name: Log in to ghcr.io
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io --username "${{ github.actor }}" --password-stdin
+      - name: Package and push
+        run: |
+          helm package .
+          helm push co2-institution-epfl-*.tgz "oci://ghcr.io/$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')/helm"

@@ -1,12 +1,11 @@
 # The EPFL institution folder as an image.
 #
-# Why this exists: the CO2 Calculator frontend reads the folder at startup,
-# from a volume at /institution. An image carries the folder to a cluster
-# and to Docker Compose alike, with a version, and with no git on the host.
+# Why this exists: a Docker Compose host gets the folder with no git and
+# no Helm. A cluster uses the Helm chart of this repository.
 #
-# Two ways to use it. Docker Compose mounts /institution of the image
-# directly, read-only. The Helm chart runs the image as an init container:
-# the command copies the folder into the volume at /out, then stops.
+# Docker Compose mounts /institution of the image directly, read-only. The
+# command is for a cluster that uses the image in place of the chart: an
+# init container copies the folder into the volume at /out, then stops.
 #
 # busybox, not scratch: the copy needs sh, rm and cp. No RUN line, so the
 # image builds for every platform without an emulator.
