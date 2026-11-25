@@ -3,8 +3,8 @@
 The [CO2 Calculator](https://github.com/EPFL-ENAC/co2-calculator) is the
 same image for each institution. One folder, given at startup, makes it
 the calculator of one institution. This repository holds the folder of
-EPFL. One version tag publishes it in two forms: a Helm chart for a
-cluster, and an image for Docker Compose.
+EPFL. One version tag publishes it as an image, for a cluster and for
+Docker Compose, and as a Helm chart, the fallback for a cluster.
 
 ## The folder
 
@@ -43,7 +43,47 @@ INSTITUTION_DIR=../../co2-institution-epfl/institution
 The path is relative to `co2-calculator/frontend/`. Off the EPFL network,
 the font server does not answer, and the app shows the fallback font.
 
-## On a cluster: the Helm chart
+## The image
+
+The image is `ghcr.io/epfl-enac/co2-institution-epfl`. Its tag is the
+git tag, for example `v1.1.0`. The folder is at `/institution` in the
+image. Each institution has its own repository and its own image, and
+the `co2-calculator` chart and images are the same for all of them.
+
+### On a cluster
+
+Give the image to the `co2-calculator` chart, in the overlay:
+
+```yaml
+helmCharts:
+  - name: co2-calculator
+    valuesInline:
+      frontend:
+        institutionAssets:
+          image: ghcr.io/epfl-enac/co2-institution-epfl:v1.1.0
+```
+
+An init container runs the image before the frontend starts, and its
+command copies the folder into the volume at `/out`. A new tag restarts
+the frontend pods. The nodes must be able to pull the image.
+
+A value of the pod environment wins over a line of `values.env`. Thus
+each cluster keeps its own values in its overlay: `APP_ENVIRONMENT`,
+`APP_SENTRY_DSN`, `APP_MATOMO_*` and `APP_OPS_*`.
+
+### With Docker Compose
+
+Set the image for `docker-compose.deploy.yml` of `co2-calculator`. The
+frontend mounts the folder of the image directly, read-only. The host
+needs no git:
+
+```sh
+INSTITUTION_IMAGE=ghcr.io/epfl-enac/co2-institution-epfl:v1.1.0
+```
+
+## On a cluster, as a fallback: the Helm chart
+
+Use the chart only if the nodes of the cluster cannot pull the image.
 
 The chart makes one ConfigMap from the folder. Install it next to the
 `co2-calculator` chart, and give its name to that chart.
@@ -91,25 +131,6 @@ A value of the pod environment wins over a line of `values.env`. Thus
 each cluster keeps its own values in its overlay: `APP_ENVIRONMENT`,
 `APP_SENTRY_DSN`, `APP_MATOMO_*` and `APP_OPS_*`.
 
-## With Docker Compose: the image
-
-The image is `ghcr.io/epfl-enac/co2-institution-epfl`. Its tag is the
-git tag, for example `v1.1.0`. The folder is at `/institution` in the
-image.
-
-Set the image for `docker-compose.deploy.yml` of `co2-calculator`. The
-frontend mounts the folder of the image directly, read-only. The host
-needs no git:
-
-```sh
-INSTITUTION_IMAGE=ghcr.io/epfl-enac/co2-institution-epfl:v1.1.0
-```
-
-A cluster can also use the image, with the
-`frontend.institutionAssets.image` value of the `co2-calculator` chart.
-An init container then runs the image, and its command copies the folder
-into the volume at `/out`. The nodes must be able to pull the image.
-
 ## Version 1.1.0 and the co2-calculator version
 
 Version 1.1.0 adds `offnet.html`. It needs a `co2-calculator` version
@@ -146,8 +167,7 @@ larger, use a font server and URLs.
 3. Open a pull request. The CI jobs render the chart and build the image.
 4. After the merge, push the tag of the new version, for example
    `v1.1.0`. The CI jobs publish the chart `1.1.0` and the image `v1.1.0`.
-5. In the operations repository, set the new chart version in each
-   overlay.
+5. In the operations repository, set the new image tag in each overlay.
 
 If the tag and `Chart.yaml` give different versions, the chart job stops.
 
