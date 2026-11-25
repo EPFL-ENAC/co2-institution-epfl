@@ -1,0 +1,234 @@
+<!doctype html>
+<!--
+  EPFL page for clients outside the EPFL network (co2-calculator #3196).
+  The frontend sends this file, and no other, to these clients. So the
+  texts, the CSS, the script, the logo and the background are all in this
+  file. Only the font comes from an other host.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>CO₂ Calculator</title>
+    <!-- No icon request: /favicon.ico is closed to this client. -->
+    <link rel="icon" href="data:," />
+    <style>
+      @font-face {
+        font-family: SuisseIntl;
+        src: url('https://enac-it-fonts.epfl.ch/SuisseIntl-Regular-WebS.woff2')
+          format('woff2');
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: SuisseIntl;
+        src: url('https://enac-it-fonts.epfl.ch/SuisseIntl-Medium-WebS.woff2')
+          format('woff2');
+        font-weight: 500;
+        font-display: swap;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        font-family: SuisseIntl, system-ui, sans-serif;
+        color: #212121;
+        background: #fff;
+      }
+      /* login-illustration.svg of this folder, as a data URL. */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjM4IiBoZWlnaHQ9IjIzOCIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTAgMGgyMzh2MjM4SDB6Ii8+PGRlZnM+PHBhdGggaWQ9ImEiIGZpbGw9InJlZCIgZD0iTTE5IDhxLjQgMCAuNy0uM0wyMCA3bC0uMy0uN0wxOSA2bC0uNy4zLS4zLjdxMCAuNC4zLjd0LjcuM20wIDJxLTEuMyAwLTIuMS0uOVQxNiA3dC45LTIuMVQxOSA0dDIuMS45VDIyIDd0LS45IDIuMS0yLjEuOW0tNy0zcS42IDAgMS0uNHQuNS0xLjEtLjQtMUwxMiA0cS0uNiAwLTEgLjRsLS41IDEuMXEwIC43LjQgMVQxMiA3bTAgMnEtMS41IDAtMi41LTF0LTEtMi41IDEtMi41VDEyIDJ0Mi41IDFhMyAzIDAgMCAxIDEgMi41cTAgMS41LTEgMi41QTMgMyAwIDAgMSAxMiA5bS00IDQuNHEwIC43LjggMS43dDMuMiAzLjJxMi40LTIuMSAzLjItMy4xdC44LTEuOHEwLS42LS40LTF0LS45LS40bC0uNy4yLS41LjQtMS4yIDEuNGgtLjdsLTEuMi0xLjQtLjUtLjUtLjYtLjFxLS42IDAtMSAuNGExIDEgMCAwIDAtLjMgMW0tMiAwcTAtMS40LjktMi40dDIuNC0xcS44IDAgMS41LjR0MS4yLjlxLjUtLjYgMS4yLTF0MS41LS4zcTEuNSAwIDIuNCAxdC45IDIuNC0xIDIuNi0zLjkgNEwxMiAyMWwtMS4xLTFxLTMtMi43LTQtNFQ2IDEzLjRNNSA4cS40IDAgLjctLjNMNiA3bC0uMy0uN0w1IDZsLS43LjNMNCA3cTAgLjQuMy43VDUgOG03IDE0di0yaDh2LTdoLTN2LTJoM3EuOCAwIDEuNC42VDIyIDEzdjl6bS04LTJoOHYySDJ2LTlxMC0uOC42LTEuNEEyIDIgMCAwIDEgNCAxMWgzdjJINHptMS0xMHEtMS4zIDAtMi4xLS45VDIgN3QuOS0yLjFUNSA0dDIuMS45VDggN3QtLjkgMi4xVDUgMTAiLz48cGF0aCBpZD0iYiIgZmlsbD0icmVkIiBkPSJNNy40IDIxLjV2LTJsMi45LTJ2LTRsLTcuOCAzdi0yLjRsNy44LTUuNVY0LjJxMC0uNy41LTEuMmEyIDIgMCAwIDEgMS4yLS41cS43IDAgMS4yLjV0LjUgMS4ydjQuNGw3LjggNS41djIuNWwtNy44LTMuMXY0bDMgMnYyTDEyIDIwLjF6Ii8+PHBhdGggaWQ9ImMiIGZpbGw9InJlZCIgZD0iTTMgMjFWN2g0VjNoMTB2OGg0djEwaC04di00aC0ydjR6bTItMmgydi0ySDV6bTAtNGgydi0ySDV6bTAtNGgyVjlINXptNCA0aDJ2LTJIOXptMC00aDJWOUg5em0wLTRoMlY1SDl6bTQgOGgydi0yaC0yem0wLTRoMlY5aC0yem0wLTRoMlY1aC0yem00IDEyaDJ2LTJoLTJ6bTAtNGgydi0yaC0yeiIvPjxwYXRoIGlkPSJkIiBmaWxsPSJyZWQiIGQ9Im0xMC42IDE4LjIgNS4xLTYuMmgtNGwuOC01LjdMNy44IDEzaDMuNXpNOCAyMmwxLTdINGw5LTEzaDJsLTEgOGg2TDEwIDIyeiIvPjxwYXRoIGlkPSJlIiBmaWxsPSJyZWQiIGQ9Im0xMS4yIDIyLS44LS4xcS0uNC0uMS0uNy0uNWwtNy4xLTcuMS0uNS0uN2EyIDIgMCAwIDEgMC0xLjVsLjUtLjcgOC44LTguOHEuMi0uMy42LS40bC44LS4ySDIwcS44IDAgMS40LjZUMjIgNHY3LjJhMiAyIDAgMCAxLS42IDEuNGwtOC44IDguOC0uNy41em0wLTIgOC44LTguOVY0aC03LjJMNCAxMi45em02LjMtMTJxLjYgMCAxLS40dC41LTEuMS0uNS0xbC0xLS41cS0uNiAwLTEgLjRMMTYgNi41cTAgLjYuNCAxdDEgLjUiLz48cGF0aCBpZD0iZiIgZmlsbD0icmVkIiBkPSJNNiAyMHEtLjggMC0xLjQtLjZBMiAyIDAgMCAxIDQgMThxMC0uOC42LTEuNEEyIDIgMCAwIDEgNiAxNnEuOCAwIDEuNC42VDggMTh0LS42IDEuNEEyIDIgMCAwIDEgNiAyMG02IDBxLS44IDAtMS40LS42QTIgMiAwIDAgMSAxMCAxOHEwLS44LjYtMS40QTIgMiAwIDAgMSAxMiAxNnEuOCAwIDEuNC42VDE0IDE4dC0uNiAxLjRhMiAyIDAgMCAxLTEuNC42bTYgMHEtLjggMC0xLjQtLjZBMiAyIDAgMCAxIDE2IDE4cTAtLjguNi0xLjRBMiAyIDAgMCAxIDE4IDE2cS44IDAgMS40LjZUMjAgMTh0LS42IDEuNGEyIDIgMCAwIDEtMS40LjZNNiAxNHEtLjggMC0xLjQtLjZBMiAyIDAgMCAxIDQgMTJxMC0uOC42LTEuNEEyIDIgMCAwIDEgNiAxMHEuOCAwIDEuNC42VDggMTJ0LS42IDEuNEEyIDIgMCAwIDEgNiAxNG02IDBxLS44IDAtMS40LS42QTIgMiAwIDAgMSAxMCAxMnEwLS44LjYtMS40QTIgMiAwIDAgMSAxMiAxMHEuOCAwIDEuNC42VDE0IDEydC0uNiAxLjRhMiAyIDAgMCAxLTEuNC42bTYgMHEtLjggMC0xLjQtLjZBMiAyIDAgMCAxIDE2IDEycTAtLjguNi0xLjRBMiAyIDAgMCAxIDE4IDEwcS44IDAgMS40LjZUMjAgMTJ0LS42IDEuNGEyIDIgMCAwIDEtMS40LjZNNiA4cS0uOCAwLTEuNC0uNkEyIDIgMCAwIDEgNCA2cTAtLjguNi0xLjRBMiAyIDAgMCAxIDYgNHEuOCAwIDEuNC42VDggNnQtLjYgMS40QTIgMiAwIDAgMSA2IDhtNiAwcS0uOCAwLTEuNC0uNkEyIDIgMCAwIDEgMTAgNnEwLS44LjYtMS40QTIgMiAwIDAgMSAxMiA0cS44IDAgMS40LjZUMTQgNnQtLjYgMS40QTIgMiAwIDAgMSAxMiA4bTYgMHEtLjggMC0xLjQtLjZBMiAyIDAgMCAxIDE2IDZxMC0uOC42LTEuNEEyIDIgMCAwIDEgMTggNHEuOCAwIDEuNC42VDIwIDZ0LS42IDEuNEEyIDIgMCAwIDEgMTggOCIvPjxwYXRoIGlkPSJnIiBmaWxsPSJyZWQiIGQ9Ik02LjUgMjBxLTIuMyAwLTMuOS0xLjZUMSAxNC41cTAtMiAxLjItMy40IDEuMi0xLjUgMy0yYTcgNyAwIDAgMSAyLjUtMy42UTkuNiA0IDEyIDRxMyAwIDUgMiAyIDIuMSAyIDUgMS45LjIgMyAxLjYgMSAxLjMgMSAyLjkgMCAxLjgtMS4zIDMuMi0xLjMgMS4zLTMuMiAxLjN6bTAtMmgxMnExIDAgMS44LS43YTIgMiAwIDAgMCAuNy0xLjhxMC0xLS43LTEuOHQtMS44LS43SDE3di0ycTAtMi0xLjUtMy41UTE0LjEgNiAxMiA2cS0xLjYgMC0yLjguOUE1IDUgMCAwIDAgNy40IDlxMiAuMyAzLjMgMS44dDEuMyAzLjZoLTJxMC0xLjQtMS0yLjVhMyAzIDAgMCAwLTIuNS0xUTUuMSAxMSA0IDEyYTMgMyAwIDAgMC0xIDIuNVEzIDE2IDQgMTdhMyAzIDAgMCAwIDIuNSAxIi8+PC9kZWZzPjxnIG9wYWNpdHk9Ii4yNSI+PHVzZSBocmVmPSIjYSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNSA1KSIvPjx1c2UgaHJlZj0iI2IiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM5IDUpIi8+PHVzZSBocmVmPSIjYyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNzMgNSkiLz48dXNlIGhyZWY9IiNkIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMDcgNSkiLz48dXNlIGhyZWY9IiNlIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNDEgNSkiLz48dXNlIGhyZWY9IiNmIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNzUgNSkiLz48dXNlIGhyZWY9IiNnIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMDkgNSkiLz48dXNlIGhyZWY9IiNnIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1IDM5KSIvPjx1c2UgaHJlZj0iI2UiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM5IDM5KSIvPjx1c2UgaHJlZj0iI2EiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDczIDM5KSIvPjx1c2UgaHJlZj0iI2IiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwNyAzOSkiLz48dXNlIGhyZWY9IiNjIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNDEgMzkpIi8+PHVzZSBocmVmPSIjZCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTc1IDM5KSIvPjx1c2UgaHJlZj0iI2YiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIwOSAzOSkiLz48dXNlIGhyZWY9IiNmIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1IDczKSIvPjx1c2UgaHJlZj0iI2EiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM5IDczKSIvPjx1c2UgaHJlZj0iI2ciIHRyYW5zZm9ybT0idHJhbnNsYXRlKDczIDczKSIvPjx1c2UgaHJlZj0iI2QiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwNyA3MykiLz48dXNlIGhyZWY9IiNiIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNDEgNzMpIi8+PHVzZSBocmVmPSIjZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTc1IDczKSIvPjx1c2UgaHJlZj0iI2MiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIwOSA3MykiLz48dXNlIGhyZWY9IiNiIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1IDEwNykiLz48dXNlIGhyZWY9IiNjIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzOSAxMDcpIi8+PHVzZSBocmVmPSIjZiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNzMgMTA3KSIvPjx1c2UgaHJlZj0iI2UiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwNyAxMDcpIi8+PHVzZSBocmVmPSIjZyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTQxIDEwNykiLz48dXNlIGhyZWY9IiNhIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNzUgMTA3KSIvPjx1c2UgaHJlZj0iI2QiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIwOSAxMDcpIi8+PHVzZSBocmVmPSIjZCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNSAxNDEpIi8+PHVzZSBocmVmPSIjZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzkgMTQxKSIvPjx1c2UgaHJlZj0iI2ciIHRyYW5zZm9ybT0idHJhbnNsYXRlKDczIDE0MSkiLz48dXNlIGhyZWY9IiNhIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMDcgMTQxKSIvPjx1c2UgaHJlZj0iI2YiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE0MSAxNDEpIi8+PHVzZSBocmVmPSIjYiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTc1IDE0MSkiLz48dXNlIGhyZWY9IiNjIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMDkgMTQxKSIvPjx1c2UgaHJlZj0iI2ciIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUgMTc1KSIvPjx1c2UgaHJlZj0iI2MiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM5IDE3NSkiLz48dXNlIGhyZWY9IiNkIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg3MyAxNzUpIi8+PHVzZSBocmVmPSIjZiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTA3IDE3NSkiLz48dXNlIGhyZWY9IiNiIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNDEgMTc1KSIvPjx1c2UgaHJlZj0iI2UiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE3NSAxNzUpIi8+PHVzZSBocmVmPSIjYSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjA5IDE3NSkiLz48dXNlIGhyZWY9IiNiIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1IDIwOSkiLz48dXNlIGhyZWY9IiNmIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzOSAyMDkpIi8+PHVzZSBocmVmPSIjZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNzMgMjA5KSIvPjx1c2UgaHJlZj0iI2MiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwNyAyMDkpIi8+PHVzZSBocmVmPSIjYSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTQxIDIwOSkiLz48dXNlIGhyZWY9IiNnIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNzUgMjA5KSIvPjx1c2UgaHJlZj0iI2QiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIwOSAyMDkpIi8+PC9nPjwvc3ZnPg==') center
+          repeat;
+        opacity: 0.25;
+        z-index: -1;
+      }
+      main {
+        width: 100%;
+        max-width: 55rem;
+        background: #fff;
+        box-shadow: 0 0.25rem 1.5rem rgb(0 0 0 / 15%);
+        padding: 6rem 6rem 5rem;
+        text-align: center;
+      }
+      /* The script sets the lang of <html>. Without script, English shows. */
+      html[lang='en'] [lang='fr'],
+      html[lang='fr'] [lang='en'] {
+        display: none;
+      }
+      .logo {
+        height: 4.5rem;
+      }
+      .app {
+        margin: 0.5rem 0 3rem;
+        font-size: 2.75rem;
+        font-weight: 500;
+      }
+      h1 {
+        font-size: 1.9rem;
+        font-weight: 500;
+        line-height: 1.5;
+        margin: 0 auto 1rem;
+        max-width: 30rem;
+      }
+      .hint {
+        font-size: 1.5rem;
+        color: #707070;
+        margin: 0 auto 4rem;
+        max-width: 26rem;
+      }
+      .button {
+        display: block;
+        padding: 1.1rem;
+        margin-bottom: 1rem;
+        font-size: 1.4rem;
+        font-weight: 500;
+        border: 2px solid #ff0000;
+        border-radius: 0.1875rem;
+        text-decoration: none;
+      }
+      .retry {
+        background: #ff0000;
+        color: #fff;
+      }
+      .retry:hover {
+        background: #b51f1f;
+        border-color: #b51f1f;
+      }
+      .vpn {
+        background: #fff;
+        color: #ff0000;
+      }
+      .vpn:hover {
+        background: #fbeceb;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid #d5d5d5;
+        margin: 3rem 0;
+      }
+      .contact {
+        text-align: left;
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: #707070;
+        margin: 0;
+      }
+      .contact a {
+        color: #ff0000;
+      }
+      .languages {
+        margin-top: 2rem;
+      }
+      .languages button {
+        font: inherit;
+        color: #707070;
+        background: none;
+        border: 0;
+        padding: 0.25rem 0.5rem;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+      .languages button[aria-pressed='true'] {
+        color: #212121;
+        font-weight: 500;
+        text-decoration: none;
+      }
+      @media (max-width: 40rem) {
+        main {
+          padding: 3rem 1.5rem;
+        }
+        .app {
+          font-size: 2rem;
+        }
+        h1 {
+          font-size: 1.4rem;
+        }
+        .hint {
+          font-size: 1.15rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <!-- logo.svg of this folder. -->
+      <svg
+        class="logo"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 182.4 53"
+        role="img"
+        aria-label="EPFL"
+        fill="#ff0000"
+      >
+        <path d="M0 21.6h11.4V9.8h26.9V0H0zM0 53h38.3v-9.8H11.4V31.4H0z" />
+        <path
+          d="M11.4 21.6H36v9.8H11.4zM86 4.9c-1.5-1.5-3.4-2.6-5.7-3.5C78 .4 75.1 0 71.8 0H48.1v53h11.4V31.4h12.2c3.3 0 6.1-.4 8.5-1.3 2.3-.9 4.2-2.1 5.7-3.5 1.5-1.5 2.5-3.1 3.2-5s1-3.8 1-5.8-.3-4-1-5.8c-.6-2-1.7-3.7-3.1-5.1m-8 13.8c-.6.8-1.3 1.4-2.3 1.8q-1.35.6-3.3.9c-1.2.1-2.5.2-3.9.2h-9.1V9.8h9.1c1.3 0 2.6.1 3.9.2q1.8.15 3.3.9c.9.4 1.7 1 2.3 1.8q.9 1.2.9 3c0 1.8-.3 2.3-.9 3M155.5 43.2V0H144v53h38.4v-9.8zM97.4 21.6h11.5V9.8h26.9V0H97.4zM97.4 31.4h11.4V53H97.4zM108.9 21.6h24.6v9.8h-24.6z"
+        />
+      </svg>
+      <p class="app">CO₂ Calculator</p>
+      <div lang="en">
+        <h1>The CO₂ calculator is only available on the EPFL network.</h1>
+        <p class="hint">
+          If you are off campus, connect to the EPFL VPN and try again.
+        </p>
+        <!-- An empty href loads this address again: no script needed. -->
+        <a class="button retry" href="">Retry</a>
+        <a class="button vpn" href="https://www.epfl.ch/campus/services/en/it-services/network-services/remote-intranet-access/"
+          >How to connect to the EPFL VPN</a
+        >
+        <hr />
+        <p class="contact">
+          If you are not affiliated with EPFL and would like to use the
+          calculator, please contact EPFL at the following email address:
+          <a href="mailto:co2calculator@epfl.ch">co2calculator@epfl.ch</a>
+        </p>
+      </div>
+      <div lang="fr">
+        <h1>
+          Le calculateur CO₂ n'est accessible que depuis le réseau de l'EPFL.
+        </h1>
+        <p class="hint">
+          Si vous êtes hors du campus, connectez-vous au VPN de l'EPFL et
+          réessayez.
+        </p>
+        <a class="button retry" href="">Réessayer</a>
+        <a class="button vpn" href="https://www.epfl.ch/campus/services/en/it-services/network-services/remote-intranet-access/"
+          >Comment se connecter au VPN de l'EPFL</a
+        >
+        <hr />
+        <p class="contact">
+          Si vous êtes externe à l'EPFL et que vous souhaitez utiliser le
+          calculateur, merci de nous contacter à l'adresse mail suivante :
+          <a href="mailto:co2calculator@epfl.ch">co2calculator@epfl.ch</a>
+        </p>
+      </div>
+      <div class="languages">
+        <button type="button" data-lang="en">English</button>
+        <button type="button" data-lang="fr">Français</button>
+      </div>
+    </main>
+    <script>
+      const buttons = document.querySelectorAll('.languages button');
+      const show = (lang) => {
+        document.documentElement.lang = lang;
+        buttons.forEach((button) =>
+          button.setAttribute('aria-pressed', button.dataset.lang === lang),
+        );
+      };
+      buttons.forEach((button) =>
+        button.addEventListener('click', () => show(button.dataset.lang)),
+      );
+      show(navigator.language.startsWith('fr') ? 'fr' : 'en');
+    </script>
+  </body>
+</html>

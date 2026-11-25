@@ -1,4 +1,0 @@
-# Name of the ConfigMap. Empty: the chart name, co2-institution-epfl. Give
-# that name to the co2-calculator chart in
-# frontend.institutionAssets.volume.configMap.name.
-configMapName: ""
