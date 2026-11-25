@@ -1,11 +1,11 @@
 # The EPFL institution folder as an image.
 #
-# Why this exists: a Docker Compose host gets the folder with no git and
-# no Helm. A cluster uses the Helm chart of this repository.
+# Why this exists: a cluster and a Docker Compose host get the folder
+# with a version, and with no git on the host.
 #
-# Docker Compose mounts /institution of the image directly, read-only. The
-# command is for a cluster that uses the image in place of the chart: an
-# init container copies the folder into the volume at /out, then stops.
+# Docker Compose, or a cluster with image volumes, mounts /institution of
+# the image directly, read-only. The command is for an init container: it
+# copies the folder into the volume at /out, then stops.
 #
 # busybox, not scratch: the copy needs sh, rm and cp. No RUN line, so the
 # image builds for every platform without an emulator.
